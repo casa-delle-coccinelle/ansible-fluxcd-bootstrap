@@ -1,0 +1,18 @@
+flux_cd_version: v2.0.1
+flux_cd_image_repo: ghcr.io/fluxcd/flux-cli
+cluster_ca: ""
+cluster_cert: ""
+cluster_key: ""
+api_server:
+    address: "127.0.0.1"
+    port: "6443"
+github:
+    user: ""
+    owner: ""
+    repo: ""
+    token: ""
+git:
+    branch: main
+    path: .
+aws_access_key_id: ''
+aws_secret_access_key: ''

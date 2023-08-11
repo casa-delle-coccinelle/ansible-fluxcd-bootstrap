@@ -1,0 +1,58 @@
+---
+- name: Create temp file for kubeconfig
+  ansible.builtin.tempfile:
+    state: file
+    suffix: _kubeconfig
+  register: kubeconfig
+
+- name: Fill kubeconfig
+  ansible.builtin.template:
+    src: kubeconfig.j2
+    dest: "{{ kubeconfig.path }}"
+  when: kubeconfig_path is not defined
+
+- name: Fill kubeconfig
+  ansible.builtin.copy:
+    src: "{{ kubeconfig_path }}"
+    dest: "{{ kubeconfig.path }}"
+    remote_src: yes
+  when: kubeconfig_path is defined
+
+- name: Correct server address
+  ansible.builtin.replace:
+    path: "{{ kubeconfig.path }}"
+    regexp: '127.0.0.1'
+    replace: '{{ ansible_default_ipv4.address }}'
+  when: kubeconfig_path is defined
+
+- name: Run fluxcd container image
+  community.docker.docker_container:
+    name: fluxcd-bootstrap
+    image: "{{ flux_cd_image_repo }}:{{ flux_cd_version }}"
+    volumes:
+      - "{{ kubeconfig.path }}:/kubeconfig"
+    user: 0:0
+    detach: false
+    cleanup: true
+    env:
+        KUBECONFIG: "/kubeconfig"
+        GITHUB_TOKEN: "{{ github.token }}"
+        GITHUB_USER: "{{ github.user }}"
+    command:
+        - bootstrap
+        - github
+        - --token-auth
+        - "--owner={{ github.owner }}"
+        - "--repository={{ github.repo }}"
+        - "--branch={{ git.branch }}"
+        - "--path={{ git.path }}"
+        - "--log-level=debug"
+
+- name: Bootstrap AWS credentials
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', item) | from_yaml }}"
+    kubeconfig: "{{ kubeconfig.path }}"
+  with_items:
+    - aws-credentials-ns.yaml.j2
+    - awssm-secret.yaml.j2
