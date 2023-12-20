@@ -1,4 +1,5 @@
-flux_cd_version: v2.0.1
+---
+flux_cd_version: v2.2.2
 flux_cd_image_repo: ghcr.io/fluxcd/flux-cli
 cluster_ca: ""
 cluster_cert: ""
@@ -16,3 +17,6 @@ git:
     path: .
 aws_access_key_id: ''
 aws_secret_access_key: ''
+bitwarden_user: ''
+bitwarden_password: ''
+bitwarden_host: ''

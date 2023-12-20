@@ -15,7 +15,7 @@
   ansible.builtin.copy:
     src: "{{ kubeconfig_path }}"
     dest: "{{ kubeconfig.path }}"
-    remote_src: yes
+    remote_src: true
   when: kubeconfig_path is defined
 
 - name: Correct server address
@@ -25,14 +25,8 @@
     replace: '{{ ansible_default_ipv4.address }}'
   when: kubeconfig_path is defined
 
-- name: Bootstrap AWS credentials
-  kubernetes.core.k8s:
-    state: present
-    definition: "{{ lookup('template', item) | from_yaml }}"
-    kubeconfig: "{{ kubeconfig.path }}"
-  with_items:
-    - aws-credentials-ns.yaml.j2
-    - awssm-secret.yaml.j2
+- name: Load credentials
+  import_tasks: credentials.yaml
 
 - name: Run fluxcd container image
   community.docker.docker_container:
