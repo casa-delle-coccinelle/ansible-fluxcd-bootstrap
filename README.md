@@ -1,7 +1,7 @@
 # ansible-fluxcd-bootstrap
 
 Sample role that does flux bootstrap of a cluster from a Github repo.
-As part of the bootstrap role creates a `aws-credentials` ns and deploys `awssm-secret` there to enable ExternalSecretsOperator.
+As part of the bootstrap role creates a `aws-credentials` and `bitwarden-secret` ns and deploys `awssm-secret` and `bitwarden-secret` respectivelly to enable ExternalSecretsOperator.
 Role is explicitly intended for personal usage (in other words - I don't expect it will work for you).
 
 ## Prerequisites
