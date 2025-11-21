@@ -8,9 +8,7 @@ dependencies:
       - name: packaging
       - name: setuptools
       - name: requests
-        versions: 2.31.0  # HTTP bug in docker.py
       - name: docker
       - name: kubernetes
-        version: 29.0.0  # Newer versions update requests
       - name: jsonpatch
       - name: PyYAML
